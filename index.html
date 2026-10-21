@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1f4a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%E2%9A%9B%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<title>Chương 4: Động lượng và Va chạm – Vật lí 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#12306b; --navy-d:#0b1f4a; --blue:#2a5db0; --sky:#e8effa;
+  --orange:#f6a43a; --peach:#fff1dc; --ink:#1b2437; --muted:#5b6578; --card:#fff; --bg:#f5f7fb;
+  --shadow:0 10px 30px rgba(18,48,107,.12);
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#0d1526;--card:#16213a;--ink:#e8edf7;--muted:#a3aec5;--sky:#1c2c4d;--peach:#3a2c18;--shadow:0 10px 30px rgba(0,0,0,.4)}
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;font-family:Roboto,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65;font-size:17px}
+h1,h2,h3{font-family:Montserrat,sans-serif;line-height:1.2;margin:0}
+.wrap{max-width:1040px;margin:0 auto;padding:0 18px}
+
+/* nav */
+nav{position:sticky;top:0;z-index:20;background:var(--navy-d);box-shadow:0 2px 12px rgba(0,0,0,.25)}
+nav .wrap{display:flex;gap:6px;overflow-x:auto;padding:10px 18px;scrollbar-width:none}
+nav a{color:#dbe5fa;text-decoration:none;font:600 14px Montserrat,sans-serif;padding:8px 14px;border-radius:999px;white-space:nowrap;transition:.2s}
+nav a:hover,nav a.on{background:var(--orange);color:var(--navy-d)}
+
+/* hero */
+.hero{background:linear-gradient(160deg,var(--navy-d),var(--navy) 60%,var(--blue));color:#fff;padding:56px 0 90px;position:relative;overflow:hidden}
+.hero h1{font-size:clamp(30px,6vw,56px);font-weight:800;max-width:14ch}
+.hero p{max-width:46ch;color:#cdd9f3;margin:16px 0 26px}
+.hero small{display:block;color:#9fb3df;margin-bottom:14px;font-weight:500}
+.btn{display:inline-block;border:0;cursor:pointer;font:700 15px Montserrat,sans-serif;padding:13px 24px;border-radius:14px;background:var(--orange);color:var(--navy-d);text-decoration:none;box-shadow:0 6px 16px rgba(246,164,58,.35);transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(246,164,58,.5)}
+.btn.alt{background:transparent;color:#fff;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5);margin-left:8px}
+.btn.sm{padding:10px 18px;font-size:14px}
+/* newton's cradle: the hero moment */
+.cradle{position:absolute;right:4%;bottom:0;width:min(330px,60vw);height:210px;opacity:.95}
+.ball{position:absolute;bottom:20px;width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff,#b8c9ee 60%,#7f9bd6);box-shadow:0 8px 14px rgba(0,0,0,.3)}
+.ball::before{content:"";position:absolute;left:50%;bottom:46px;width:2px;height:120px;background:rgba(255,255,255,.55);transform:translateX(-50%)}
+.cradle .ball{transform-origin:50% -120px}
+.b1{left:10px;animation:swL 2.4s ease-in-out infinite}
+.b2{left:56px}.b3{left:102px}.b4{left:148px}
+.b5{left:194px;animation:swR 2.4s ease-in-out infinite}
+@keyframes swL{0%{transform:rotate(30deg)}25%,100%{transform:rotate(0)}}
+@keyframes swR{0%,50%{transform:rotate(0)}75%{transform:rotate(-30deg)}100%{transform:rotate(0)}}
+@keyframes swR{0%,50%{transform:rotate(0)}75%{transform:rotate(-30deg)}100%{transform:rotate(0)}}
+.cradle .ball::before{display:block}
+
+/* sections */
+section{padding:54px 0 8px}
+section h2{font-size:clamp(24px,4vw,34px);color:var(--navy);margin-bottom:6px}
+@media (prefers-color-scheme:dark){section h2{color:#fff}}
+.lead{color:var(--muted);max-width:60ch;margin:0 0 26px}
+.grid{display:grid;gap:20px;grid-template-columns:1fr}
+@media(min-width:760px){.grid.two{grid-template-columns:1fr 1fr}}
+.card{background:var(--card);border-radius:22px;padding:24px;box-shadow:var(--shadow);border-top:5px solid var(--blue);transition:transform .25s,box-shadow .25s,border-color .25s}
+.card:hover{transform:translateY(-6px);border-color:var(--orange);box-shadow:0 16px 38px rgba(18,48,107,.2)}
+.card h3{font-size:19px;margin-bottom:8px;color:var(--navy)}
+@media (prefers-color-scheme:dark){.card h3{color:#fff}}
+.card p{margin:0 0 12px}
+.formula{background:var(--sky);border:2px solid var(--blue);border-radius:16px;padding:14px 16px;margin:12px 0;font:600 clamp(16px,3.6vw,21px) Montserrat,sans-serif;text-align:center;overflow-x:auto;white-space:nowrap;color:var(--navy);box-shadow:inset 0 0 0 4px var(--card)}
+@media (prefers-color-scheme:dark){.formula{color:#fff}}
+.formula.hot{background:var(--peach);border-color:var(--orange)}
+.note{font-size:15px;color:var(--muted)}
+.tag{display:inline-block;background:var(--orange);color:var(--navy-d);font:700 12px Montserrat,sans-serif;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.vec{text-decoration:overline}
+
+/* collision compare */
+.cmp .card:first-child{border-top-color:var(--orange)}
+ul.ck{padding-left:20px;margin:8px 0 12px}
+ul.ck li{margin-bottom:4px}
+
+/* steps */
+.steps{counter-reset:s;display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:760px){.steps{grid-template-columns:repeat(4,1fr)}}
+.step{background:var(--card);border-radius:18px;padding:18px 18px 18px 56px;box-shadow:var(--shadow);position:relative;transition:transform .2s}
+.step:hover{transform:translateY(-4px)}
+.step::before{counter-increment:s;content:counter(s);position:absolute;left:16px;top:16px;width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;font:700 14px Montserrat,sans-serif;display:grid;place-items:center}
+@media(min-width:760px){.step{padding:52px 16px 18px}.step::before{top:14px}}
+
+footer{margin-top:60px;background:var(--navy-d);color:#9fb3df;text-align:center;padding:26px 18px;font-size:14px}
+
+.stp{border-left:4px solid var(--blue);padding:2px 0 2px 14px;margin:16px 0}
+.stp.last{border-color:var(--orange)}
+.stp h4{margin:0 0 4px}
+.stp p{margin:4px 0}
+.cardtag{display:inline-block;font:700 12px Montserrat,sans-serif;padding:3px 10px;border-radius:999px;background:var(--sky);color:var(--blue);margin-bottom:10px}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(7,15,36,.65);display:none;align-items:flex-end;justify-content:center;z-index:50;padding:0}
+.modal.open{display:flex;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.sheet{background:var(--card);width:100%;max-width:640px;max-height:92vh;overflow-y:auto;border-radius:26px 26px 0 0;padding:26px 22px 30px;box-shadow:0 -10px 40px rgba(0,0,0,.35);animation:up .28s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+@media(min-width:700px){.modal{align-items:center;padding:20px}.sheet{border-radius:26px}}
+.sheet h3{font-size:22px;color:var(--navy);padding-right:40px}
+@media (prefers-color-scheme:dark){.sheet h3{color:#fff}}
+.close{position:sticky;float:right;top:0;border:0;background:var(--sky);color:var(--ink);width:38px;height:38px;border-radius:50%;font-size:20px;cursor:pointer;margin:-6px -4px 0 0}
+.close:hover{background:var(--orange);color:var(--navy-d)}
+.given{background:var(--sky);border-radius:14px;padding:12px 16px;margin:14px 0;font-size:15px}
+.sheet h4{font:700 15px Montserrat,sans-serif;margin:18px 0 4px;color:var(--blue)}
+.ans{background:var(--peach);border-left:5px solid var(--orange);border-radius:12px;padding:12px 16px;font-weight:500;margin-top:14px}
+:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <a href="#khoi-tam">Khối tâm</a>
+  <a href="#dong-luong">Động lượng</a>
+  <a href="#bao-toan">Bảo toàn</a>
+  <a href="#va-cham">Va chạm</a>
+  <a href="#cac-buoc">Cách giải</a>
+  <a href="#bai-tap">Bài tập</a>
+</div></nav>
+
+<header class="hero">
+  <div class="wrap">
+    <small>Vật lí 1 · ĐH Giao thông Vận tải TP.HCM</small>
+    <h1>Động lượng và Va chạm</h1>
+    <p>Tóm tắt Chương 4: khối tâm, động lượng, định luật bảo toàn, va chạm và các bài tập giải theo 4 bước.</p>
+    <a class="btn" href="#khoi-tam">Bắt đầu học</a>
+    <button class="btn alt" data-modal="m1">Xem ví dụ</button>
+  </div>
+  <div class="cradle" aria-hidden="true">
+    <div class="ball b1"></div><div class="ball b2"></div><div class="ball b3"></div><div class="ball b4"></div><div class="ball b5"></div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section id="khoi-tam">
+  <h2>1. Khối tâm</h2>
+  <p class="lead">Khối tâm là điểm đại diện cho chuyển động tịnh tiến của cả hệ. Chiếc gậy ném đi vừa quay vừa bay, nhưng khối tâm của nó vẽ ra quỹ đạo parabol; khối tâm của chiếc mỏ lết trượt trên mặt phẳng thì chuyển động theo đường thẳng.</p>
+  <div class="grid two">
+    <article class="card">
+      <h3>Tọa độ khối tâm của hệ chất điểm</h3>
+      <div class="formula">x<sub>G</sub> = Σmᵢxᵢ / M</div>
+      <div class="formula">y<sub>G</sub> = Σmᵢyᵢ / M</div>
+      <div class="formula">z<sub>G</sub> = Σmᵢzᵢ / M</div>
+      <p class="note">Với M = Σmᵢ là tổng khối lượng của hệ.</p>
+    </article>
+    <article class="card">
+      <h3>Tọa độ khối tâm của vật rắn</h3>
+      <div class="formula">x<sub>G</sub> = ∫x dm / M</div>
+      <div class="formula">y<sub>G</sub> = ∫y dm / M</div>
+      <div class="formula">z<sub>G</sub> = ∫z dm / M</div>
+      <p class="note">Vật đồng chất, đối xứng (khối lập phương, khối cầu, hình trụ) có khối tâm ở tâm hình học.</p>
+    </article>
+    <article class="card" style="grid-column:1/-1">
+      <span class="tag">Ví dụ</span>
+      <h3>Ba chất điểm m₁ = m₂ = m₃ = 2,5 kg</h3>
+      <p>Đặt tại m₁(0; 0), m₂(2; 0), m₃(2; 1,5) (đơn vị mét). Tìm khối tâm G.</p>
+      <div class="formula">x<sub>G</sub> = (2,5·0 + 2,5·2 + 2,5·2) / (3·2,5) ≈ 1,33 m</div>
+      <div class="formula hot">y<sub>G</sub> = (2,5·0 + 2,5·0 + 2,5·1,5) / (3·2,5) = 0,5 m</div>
+    </article>
+  </div>
+</section>
+
+<section id="dong-luong">
+  <h2>2. Động lượng</h2>
+  <p class="lead">Động lượng cho biết một vật chuyển động “khó dừng” đến mức nào: vật càng nặng và càng nhanh thì động lượng càng lớn.</p>
+  <div class="grid two">
+    <article class="card">
+      <h3>Động lượng của chất điểm</h3>
+      <p>Bằng tích của khối lượng và vận tốc của nó. Động lượng là vectơ, cùng hướng với vận tốc.</p>
+      <div class="formula"><span class="vec">P</span> = m · <span class="vec">v</span></div>
+      <p class="note">Đơn vị: kg·m/s</p>
+    </article>
+    <article class="card">
+      <h3>Động lượng của hệ chất điểm</h3>
+      <p>Bằng tổng động lượng của các chất điểm trong hệ.</p>
+      <div class="formula"><span class="vec">P</span> = <span class="vec">P</span><sub>1</sub> + <span class="vec">P</span><sub>2</sub> + … + <span class="vec">P</span><sub>n</sub></div>
+    </article>
+    <article class="card" style="grid-column:1/-1">
+      <span class="tag">Định lý động lượng</span>
+      <h3>Tốc độ biến thiên động lượng bằng tổng hợp lực</h3>
+      <p>Tốc độ biến thiên động lượng của hệ chất điểm bằng tổng hợp lực tác dụng lên hệ.</p>
+      <div class="formula hot">Σ<span class="vec">F</span> = d<span class="vec">P</span> / dt</div>
+    </article>
+  </div>
+</section>
+
+<section id="bao-toan">
+  <h2>3. Định luật bảo toàn động lượng</h2>
+  <p class="lead">Khi hai hay nhiều chất điểm của một hệ cô lập tương tác với nhau, vectơ động lượng toàn phần của hệ được bảo toàn.</p>
+  <div class="grid two">
+    <article class="card">
+      <h3>Biểu thức</h3>
+      <div class="formula hot">Σ<span class="vec">F</span> = 0 ⇒ <span class="vec">P</span> = const</div>
+      <p>Với va chạm hai vật:</p>
+      <div class="formula">m₁<span class="vec">v₁</span> + m₂<span class="vec">v₂</span> = m₁<span class="vec">v₁</span>′ + m₂<span class="vec">v₂</span>′</div>
+    </article>
+    <article class="card">
+      <h3>Khi nào coi là hệ cô lập?</h3>
+      <ul class="ck">
+        <li><b>(a)</b> Hợp lực tác dụng lên hệ bằng không.</li>
+        <li><b>(b)</b> Thời gian tương tác rất bé: va chạm, vụ nổ, bắn đạn pháo…</li>
+      </ul>
+      <p class="note">Trong thời gian rất ngắn, nội lực rất lớn nên có thể bỏ qua ngoại lực.</p>
+    </article>
+  </div>
+</section>
+
+<section id="va-cham">
+  <h2>4. Bài toán va chạm</h2>
+  <p class="lead">Va chạm là khi hai vật tiến lại gần nhau, tương tác bằng các nội lực rất mạnh trong khoảng thời gian rất ngắn, rồi tách xa nhau hoặc dính vào nhau cùng chuyển động. Trong mọi va chạm, tổng vectơ động lượng của hệ đều bảo toàn.</p>
+  <div class="grid two cmp">
+    <article class="card">
+      <span class="tag">Không đàn hồi</span>
+      <h3>Va chạm hoàn toàn không đàn hồi (va chạm mềm)</h3>
+      <ul class="ck">
+        <li>Hình dạng và trạng thái bên trong của các vật thay đổi.</li>
+        <li>Không bảo toàn tổng động năng; hai vật dính nhau.</li>
+      </ul>
+      <div class="formula">m₁v₁ + m₂v₂ = (m₁ + m₂)v′</div>
+      <div class="formula hot">v′ = (m₁v₁ + m₂v₂) / (m₁ + m₂)</div>
+      <p class="note">Cơ năng chuyển thành nhiệt:</p>
+      <div class="formula">ΔK = ½m₁v₁² + ½m₂v₂² − ½(m₁+m₂)v′²</div>
+      <button class="btn sm" data-modal="m1">Xem ví dụ</button>
+    </article>
+    <article class="card">
+      <span class="tag">Đàn hồi</span>
+      <h3>Va chạm hoàn toàn đàn hồi (xuyên tâm)</h3>
+      <ul class="ck">
+        <li>Hình dạng và trạng thái bên trong của các vật không đổi.</li>
+        <li>Bảo toàn cả động lượng và tổng động năng.</li>
+      </ul>
+      <div class="formula">m₁v₁ + m₂v₂ = m₁v₁′ + m₂v₂′</div>
+      <div class="formula">½m₁v₁² + ½m₂v₂² = ½m₁v₁′² + ½m₂v₂′²</div>
+      <div class="formula hot">v₁′ = [(m₁−m₂)v₁ + 2m₂v₂] / (m₁+m₂)</div>
+      <div class="formula hot">v₂′ = [(m₂−m₁)v₂ + 2m₁v₁] / (m₁+m₂)</div>
+      <p class="note"><b>Nếu vật 2 đứng yên:</b> v₁′ = (m₁−m₂)v₁/(m₁+m₂), v₂′ = 2m₁v₁/(m₁+m₂).<br><b>Nếu hai vật cùng khối lượng:</b> v₁′ = v₂, v₂′ = v₁ (trao đổi vận tốc).</p>
+      <button class="btn sm" data-modal="m2">Xem ví dụ</button>
+    </article>
+  </div>
+</section>
+
+<section id="cac-buoc">
+  <h2>5. Các bước giải toán va chạm</h2>
+  <p class="lead">Làm lần lượt theo bốn bước.</p>
+  <div class="steps">
+    <div class="step">Tưởng tượng va chạm xảy ra, các vật sẽ chuyển động như thế nào.</div>
+    <div class="step">Xác định hệ có kín không và loại va chạm. Vẽ giản đồ các vật trước và sau va chạm.</div>
+    <div class="step">Va chạm đàn hồi: bảo toàn động lượng và động năng. Không đàn hồi: chỉ bảo toàn động lượng.</div>
+    <div class="step">Giải phương trình của bài toán.</div>
+  </div>
+</section>
+
+<section id="bai-tap">
+  <h2>6. Bài tập giải theo 4 bước</h2>
+  <p class="lead">Mỗi bài được giải đúng theo bốn bước ở mục 5. Bấm “Xem lời giải” để mở từng bài.</p>
+  <div class="grid two" id="plist"></div>
+</section>
+
+</main>
+
+<footer>Tóm tắt từ bài giảng Chương 4 – ThS Nguyễn Minh Huệ, Tổ bộ môn Vật lý, Khoa Cơ bản, ĐH GTVT TP.HCM</footer>
+
+<div id="modals"></div>
+
+<script>
+// Smooth scroll for nav links (with offset handled by CSS scroll-padding) + active highlight
+const links=[...document.querySelectorAll('nav a')];
+links.forEach(a=>a.addEventListener('click',e=>{
+  e.preventDefault();
+  const t=document.querySelector(a.getAttribute('href'));
+  if(t) t.scrollIntoView({behavior:'smooth'});
+}));
+document.querySelectorAll('.hero .btn[href]').forEach(a=>a.addEventListener('click',e=>{
+  e.preventDefault();document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth'});
+}));
+const io=new IntersectionObserver(es=>es.forEach(en=>{
+  if(en.isIntersecting){links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+en.target.id));}
+}),{rootMargin:'-45% 0px -50% 0px'});
+document.querySelectorAll('section[id]').forEach(s=>io.observe(s));
+
+// Bài tập: dữ liệu -> thẻ + modal
+const L=['Bước 1 – Hình dung va chạm','Bước 2 – Xác định hệ và loại va chạm','Bước 3 – Viết định luật bảo toàn','Bước 4 – Giải phương trình'];
+const F=t=>`<div class="formula">${t}</div>`;
+const P=[
+{id:'m1',tag:'Ví dụ',title:'Va chạm mềm giữa hai viên bi',short:'Bi 200 g (20 m/s) va chạm mềm với bi 300 g đang chuyển động ngược chiều 10 m/s.',
+ given:'Bi 1 (200 g) bay với vận tốc 20 m/s tới va chạm mềm với bi 2 (300 g) đang chuyển động ngược chiều với tốc độ 10 m/s. Tìm vận tốc hai vật sau va chạm.',
+ s:['Hai bi lao vào nhau, va chạm xong thì dính lại và cùng chuyển động.',
+ 'Thời gian va chạm rất bé nên coi hệ kín. Đây là va chạm hoàn toàn không đàn hồi. Chọn chiều dương theo v₁: m₁ = 0,2 kg; v₁ = 20 m/s; m₂ = 0,3 kg; v₂ = −10 m/s.',
+ 'Chỉ bảo toàn động lượng:'+F('m₁v₁ + m₂v₂ = (m₁ + m₂)v′'),
+ F('v′ = (0,2·20 + 0,3·(−10)) / (0,2 + 0,3)')+'<p>Cơ năng chuyển thành nhiệt: ΔK = (40 + 15) − ½·0,5·2² = 54 J.</p>'],
+ ans:'v′ = 2 m/s, cùng chiều với v₁ ban đầu.'},
+{id:'m2',tag:'Ví dụ',title:'Va chạm đàn hồi xuyên tâm của hai viên bi',short:'Bi 200 g (20 m/s) va chạm đàn hồi xuyên tâm với bi 300 g đang đứng yên.',
+ given:'Bi 1 (200 g) bay với vận tốc 20 m/s tới va chạm đàn hồi xuyên tâm với bi 2 (300 g) đang đứng yên. Tìm vận tốc hai vật sau va chạm.',
+ s:['Bi 1 đập vào bi 2 đứng yên; bi 1 nhẹ hơn nên bị bật ngược lại, bi 2 lăn về phía trước.',
+ 'Hệ kín trong thời gian va chạm. Va chạm hoàn toàn đàn hồi. m₁ = 0,2 kg; v₁ = 20 m/s; m₂ = 0,3 kg; v₂ = 0.',
+ 'Bảo toàn cả động lượng và động năng. Với vật 2 đứng yên, hai phương trình cho:'+F('v₁′ = (m₁−m₂)v₁ / (m₁+m₂)')+F('v₂′ = 2m₁v₁ / (m₁+m₂)'),
+ F('v₁′ = (0,2−0,3)·20 / 0,5 = −4 m/s')+F('v₂′ = 2·0,2·20 / 0,5 = 16 m/s')+'<p>Kiểm tra: động năng trước 40 J; sau 1,6 + 38,4 = 40 J.</p>'],
+ ans:'v₁′ = −4 m/s (bi 1 bật ngược lại); v₂′ = 16 m/s (cùng chiều ban đầu).'},
+{id:'p3',tag:'Bài giảng',title:'Khẩu pháo giật lùi',short:'Pháo 500 kg bắn đạn 5 kg với vận tốc đầu nòng 400 m/s, giật lùi 40 cm. Tìm lực hãm trung bình.',
+ given:'Một khẩu pháo khối lượng 500 kg bắn theo phương ngang. Viên đạn khối lượng 5 kg có vận tốc đầu nòng 400 m/s. Ngay sau khi bắn, pháo giật lùi một đoạn d = 40 cm. Xác định lực hãm trung bình tác dụng lên pháo.',
+ s:['Đạn bay về phía trước, pháo bị đẩy lùi về phía sau rồi dừng lại sau quãng đường d nhờ lực hãm.',
+ 'Lúc bắn, thời gian tương tác rất ngắn nên hệ pháo + đạn coi là kín theo phương ngang (giống vụ nổ). Sau đó pháo chịu lực hãm nên dùng định lý động năng. Chọn chiều dương theo đạn: m₁ = 5 kg, v₁ = 400 m/s; m₂ = 500 kg.',
+ 'Lúc bắn, động lượng bảo toàn (ban đầu hệ đứng yên):'+F('0 = m₁v₁ + m₂v₂')+'Pháo giật lùi, định lý động năng: '+F('A = K₂ − K₁ ⇒ −F<sub>c</sub>·d = 0 − ½m₂v₂²'),
+ F('v₂ = −m₁v₁/m₂ = −5·400/500 = −4 m/s')+F('F<sub>c</sub> = m₂v₂² / (2d) = 500·4² / (2·0,4)')],
+ ans:'F<sub>c</sub> = 10 000 N (độ lớn vận tốc giật lùi là 4 m/s).'},
+{id:'p4',tag:'Bài giảng',title:'Viên đạn xuyên vào bao cát',short:'Đạn 9,5 g găm vào bao cát 4,5 kg, hệ nâng lên cao 6,3 cm. Tìm vận tốc đạn.',
+ given:'Viên đạn m₁ = 9,5 g bay xuyên vào bao cát m₂ = 4,5 kg thì mắc lại trong bao cát và hệ cùng chuyển động lên đến độ cao h = 6,3 cm. Bỏ qua sức cản không khí (g = 9,8 m/s²). Xác định vận tốc của viên đạn trước khi bay vào bao cát.',
+ s:['Đạn găm vào bao cát, cả hệ đung đưa lên cao rồi dừng tại độ cao h.',
+ 'Bài có hai giai đoạn. (1) Va chạm đạn – bao cát: hệ kín, va chạm hoàn toàn không đàn hồi. (2) Đung đưa từ A lên cao h: chỉ trọng lực sinh công nên cơ năng bảo toàn. Chọn mốc thế năng tại vị trí va chạm.',
+ 'Giai đoạn 1:'+F('m₁v₁ = (m₁ + m₂)V')+'Giai đoạn 2:'+F('½(m₁+m₂)V² = (m₁+m₂)gh'),
+ F('V = √(2gh) = √(2·9,8·0,063) ≈ 1,11 m/s')+F('v₁ = (m₁+m₂)V / m₁ = (0,0095 + 4,5)·1,11 / 0,0095')],
+ ans:'v₁ ≈ 527 m/s.'},
+{id:'p5',tag:'Bài giảng',title:'Vật trượt trên cung rồi va chạm đàn hồi',short:'m₁ = 5 kg trượt từ độ cao 5 m, va chạm đàn hồi với m₂ = 10 kg đứng yên. Tìm độ cao cực đại m₁ đạt được sau va chạm.',
+ given:'Từ A vật m₁ = 5 kg trượt không ma sát trên đường cong AB, h = 5 m. Tại B nó va chạm hoàn toàn đàn hồi với vật m₂ = 10 kg đang đứng yên. Tính độ cao cực đại mà m₁ đạt được sau va chạm (lấy g = 10 m/s²).',
+ s:['m₁ trượt xuống B, đập vào m₂ đứng yên. Vì m₁ nhẹ hơn nên bị bật ngược lại và leo lên cung AB đến vị trí D.',
+ 'Ba giai đoạn: trượt A→B không ma sát (bảo toàn cơ năng); va chạm tại B hoàn toàn đàn hồi, hệ kín; trượt B→D không ma sát (bảo toàn cơ năng). Chọn mốc thế năng tại B.',
+ 'Trên AB:'+F('m₁gh = ½m₁v₁²')+'Tại B (v₂ = 0): bảo toàn động lượng và động năng, suy ra'+F('v₁′ = (m₁−m₂)v₁ / (m₁+m₂)')+'Trên BD:'+F('½m₁v₁′² = m₁gh′'),
+ F('v₁ = √(2gh) = 10 m/s')+F('v₁′ = (5−10)·10 / 15 = −10/3 m/s')+'<p>Dấu (−) cho biết m₁ bật ngược về phía A.</p>'+F('h′ = v₁′² / (2g) = (100/9) / 20')],
+ ans:'h′ = 5/9 m ≈ 0,56 m.'},
+{id:'t1',tag:'Luyện tập',title:'Đạn găm vào hộp trên mép bàn',short:'Đạn 6 g găm vào hộp 2 kg trên bàn cao 1 m, hộp rơi cách chân bàn 2 m. Tìm vận tốc ban đầu của đạn.',
+ given:'Bắn một viên đạn m = 6 g vào khối hộp M = 2 kg nằm yên trên mép bàn cao h = 1 m. Sau va chạm, đạn vẫn nằm trong hộp và cả khối rơi cách chân bàn d = 2 m. Xác định vận tốc ban đầu của viên đạn (g = 9,8 m/s²).',
+ s:['Đạn găm vào hộp, cả khối văng khỏi mép bàn theo phương ngang rồi rơi xuống như vật bị ném ngang.',
+ 'Giai đoạn 1: va chạm hoàn toàn không đàn hồi, hệ kín. Giai đoạn 2: ném ngang từ độ cao h, tầm xa d. Chọn chiều dương theo chiều bay của đạn.',
+ 'Va chạm:'+F('m·v₀ = (m + M)V')+'Ném ngang:'+F('h = ½gt²,  d = V·t'),
+ F('t = √(2h/g) = √(2/9,8) ≈ 0,452 s')+F('V = d/t ≈ 4,43 m/s')+F('v₀ = (m+M)V / m = 2,006·4,43 / 0,006')],
+ ans:'v₀ ≈ 1,48·10³ m/s (khoảng 1480 m/s).'},
+{id:'t2',tag:'Luyện tập',title:'Hai vật va chạm đàn hồi ở chân máng',short:'m₁ = 2 kg và m₂ = 4 kg thả từ cùng độ cao 5 m. Tìm độ cao cực đại mỗi vật đạt được sau va chạm lần đầu.',
+ given:'Hai vật m₁ = 2,00 kg và m₂ = 4,00 kg được thả tại cùng độ cao h = 5,00 m ở hai đầu một máng trượt không ma sát. Đến chân máng chúng va chạm hoàn toàn đàn hồi với nhau. Xác định độ cao cực đại mỗi vật đạt được sau va chạm lần thứ nhất (g = 10 m/s²).',
+ s:['Hai vật trượt xuống chân máng từ hai phía, tới C với vận tốc ngược chiều, đập vào nhau rồi bật ngược lại và leo lên máng.',
+ 'Trượt xuống và leo lên: không ma sát nên cơ năng bảo toàn. Va chạm tại C: hoàn toàn đàn hồi, hệ kín. Chọn mốc thế năng tại C và chiều dương theo chiều v₁.',
+ 'Trượt xuống:'+F('mgh = ½mv²')+'Va chạm đàn hồi:'+F('v₁′ = [(m₁−m₂)v₁ + 2m₂v₂] / (m₁+m₂)')+F('v₂′ = [(m₂−m₁)v₂ + 2m₁v₁] / (m₁+m₂)')+'Leo lên: '+F('h′ = v′² / (2g)'),
+ '<p>v₁ = 10 m/s; v₂ = −10 m/s.</p>'+F('v₁′ = [(2−4)·10 + 2·4·(−10)] / 6 ≈ −16,7 m/s')+F('v₂′ = [2·2·10 + (4−2)·(−10)] / 6 ≈ 3,3 m/s')+F('h₁′ = 16,7² / 20 ≈ 13,9 m;  h₂′ = 3,33² / 20 ≈ 0,56 m')+'<p>Kiểm tra cơ năng: 2·10·13,9 + 4·10·0,56 ≈ 300 J = (m₁+m₂)gh.</p>'],
+ ans:'h₁′ ≈ 13,9 m (≈ 14 m) và h₂′ ≈ 0,56 m.'}
+];
+const plist=document.getElementById('plist'),mods=document.getElementById('modals');
+P.forEach(q=>{
+  const c=document.createElement('article');c.className='card';
+  c.innerHTML=`<span class="cardtag">${q.tag}</span><h3>${q.title}</h3><p>${q.short}</p><button class="btn sm" data-modal="${q.id}">Xem lời giải</button>`;
+  plist.appendChild(c);
+  const m=document.createElement('div');m.className='modal';m.id=q.id;
+  m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');m.setAttribute('aria-label',q.title);
+  m.innerHTML=`<div class="sheet"><button class="close" aria-label="Đóng">×</button><h3>${q.title}</h3><div class="given"><b>Đề:</b> ${q.given}</div>`+
+    q.s.map((t,i)=>`<div class="stp${i==3?' last':''}"><h4>${L[i]}</h4><p>${t}</p></div>`).join('')+
+    `<div class="ans">Đáp số: ${q.ans}</div></div>`;
+  mods.appendChild(m);
+});
+
+// Modals
+let lastBtn=null;
+function openModal(id,btn){
+  const m=document.getElementById(id);lastBtn=btn;
+  m.classList.add('open');document.body.style.overflow='hidden';
+  m.querySelector('.sheet').scrollTop=0;m.querySelector('.close').focus();
+}
+function closeModal(){
+  document.querySelectorAll('.modal.open').forEach(m=>m.classList.remove('open'));
+  document.body.style.overflow='';if(lastBtn)lastBtn.focus();
+}
+document.querySelectorAll('[data-modal]').forEach(b=>b.addEventListener('click',()=>openModal(b.dataset.modal,b)));
+document.querySelectorAll('.modal').forEach(m=>{
+  m.addEventListener('click',e=>{if(e.target===m||e.target.closest('.close'))closeModal();});
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+</script>
+</body>
+</html>
